@@ -20,7 +20,7 @@ echo image name: $image_name
 
 function build_image(){
 echo -e "\n exec build image ......"
-WORKSPACE=/data/docker-build/demo/${app_name}
+WORKSPACE=/data/docker-build/${app_name}
 echo WORKSPACE $WORKSPACE
 cd ${WORKSPACE}
 echo $image_name && \
