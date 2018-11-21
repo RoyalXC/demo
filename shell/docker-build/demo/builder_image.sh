@@ -3,7 +3,7 @@
 group=demo
 app_name=demo
 tag=1.0.0
-hub=47.106.243.217
+hub=47.106.243.217:5000
 
 if [ "x$2" != "x" ]; then
   group=$2
