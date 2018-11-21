@@ -39,11 +39,13 @@ echo -e "\n exec clean ......"
 docker rm -f ${app_name}
 docker rmi -f ${image_name}
 }
+
 function rebuild(){
 echo -e "\n rebuild ......"
 clean
 build
 }
+
 if ["$1" == "build_image"]; then
   echo "exec build_image"
   build_image
