@@ -5,14 +5,14 @@ app_name=demo
 tag=1.0.0
 hub=47.106.243.217
 
-if["x$2" != "x"]; then
-    group=$2
+if [ "x$2" != "x" ]; then
+  group=$2
 fi
-if["x$3" != "x"]; then
-    app_name=$3
+if [ "x$3" != "x" ]; then
+  app_name=$3
 fi
-if["x$4" != "x"]; then
-    tag=$4
+if [ "x$4" != "x" ]; then
+  tag=$4
 fi
 
 image_name="$hub/${group}/${app_name}:$tag"
