@@ -15,6 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public JsonResult test() {
-        return new JsonResult<>("asdasdasd");
+        return new JsonResult<>("456456456456");
     }
 }
