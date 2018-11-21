@@ -43,7 +43,7 @@ function rebuild(){
 echo -e "\n rebuild ......"
 clean
 build_image
-push_registry
+#push_registry
 }
 
 if [ "$1" == "build_image" ]; then
