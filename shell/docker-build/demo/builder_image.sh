@@ -27,6 +27,11 @@ echo $image_name && \
 docker build -t ${image_name} ${WORKSPACE}
 }
 
+function docker_run(){
+echo -e "\n exec docker_run ......"
+docker run --name ${app_name} -p 12121:12121 -i -t -d ${image_name}
+}
+
 function push_registry(){
 echo -e "\n exec push images into registry ......"
 docker login -u "root" -p "123456789" "$hub"
@@ -44,6 +49,7 @@ echo -e "\n rebuild ......"
 clean
 build_image
 #push_registry
+docker_run
 }
 
 if [ "$1" == "build_image" ]; then
