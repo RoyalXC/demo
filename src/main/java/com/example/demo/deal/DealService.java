@@ -37,7 +37,7 @@ public class DealService {
 
     private static ConcurrentHashMap<Date, List<DealEntity>> dealMap = new ConcurrentHashMap<>();
 
-//    private static List<DealEntity> dealList = Collections.synchronizedList(new ArrayList<>());
+    //    private static List<DealEntity> dealList = Collections.synchronizedList(new ArrayList<>());
     private static ConcurrentLinkedQueue<DealEntity> dealList = new ConcurrentLinkedQueue<>();
 
     private static Map<String, Map<Date, QuotationEntity>> quotationMap = new ConcurrentHashMap<>();
@@ -45,8 +45,8 @@ public class DealService {
     @Resource(name = "taskExecutor")
     private ThreadPoolTaskExecutor executor;
 
-    public static List<DealEntity> getDealList() {
-        return (List<DealEntity>) dealList;
+    public static ConcurrentLinkedQueue<DealEntity> getDealList() {
+        return dealList;
     }
 
     public static Map<String, Map<Date, QuotationEntity>> getQuotationMap() {
@@ -110,8 +110,8 @@ public class DealService {
             int finalI = i;
             executor.execute(() -> {
                 while (true) {
-                    if (dealList.size() > 0) {
-                        DealEntity entity = dealList.poll();
+                    DealEntity entity = dealList.poll();
+                    if (entity != null) {
                         LOGGER.info("exec num:{},remove a deal :{}", finalI, entity.getDealId());
                         String stockCode = entity.getStockCode();
                         Map<Date, QuotationEntity> quotationEntityMap = quotationMap.get(stockCode);
@@ -135,11 +135,11 @@ public class DealService {
                             quotationEntity.setClose(price);
                             quotationEntity.setNow(price);
                         }
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
