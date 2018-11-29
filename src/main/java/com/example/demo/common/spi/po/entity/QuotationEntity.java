@@ -1,7 +1,10 @@
 package com.example.demo.common.spi.po.entity;
 
+import com.example.demo.common.spi.config.RandomConfig;
+import com.example.demo.common.utils.DateUtils;
+
 import java.math.BigDecimal;
-import java.sql.Time;
+import java.util.Date;
 
 /**
  * 功能描述:
@@ -13,12 +16,24 @@ public class QuotationEntity extends BaseEntity {
     private Long quotationId;
     private String stockCode;
     private String stockName;
-    private Time timestamp;
+    private Date timestamp;
     private BigDecimal max;
     private BigDecimal min;
     private BigDecimal open;
     private BigDecimal close;
     private BigDecimal now;
+
+    public QuotationEntity(DealEntity entity) {
+        this.quotationId = RandomConfig.getQuotationId();
+        this.stockCode = entity.getStockCode();
+        this.stockName = entity.getStockName();
+        this.timestamp = DateUtils.getMinute(entity.getTimestamp());
+        this.max = entity.getPrice();
+        this.min = entity.getPrice();
+        this.open = entity.getPrice();
+        this.close = entity.getPrice();
+        this.now = entity.getPrice();
+    }
 
     public Long getQuotationId() {
         return quotationId;
@@ -44,11 +59,11 @@ public class QuotationEntity extends BaseEntity {
         this.stockName = stockName;
     }
 
-    public Time getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Time timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 

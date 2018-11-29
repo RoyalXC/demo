@@ -18,4 +18,7 @@ public interface QuotationService {
     JsonResult getDealMap();
 
     JsonResult getPreMinuteQuotation();
+
+    JsonResult getQuotationMap();
+
 }

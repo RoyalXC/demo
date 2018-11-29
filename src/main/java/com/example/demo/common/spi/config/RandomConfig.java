@@ -10,10 +10,17 @@ import java.util.Random;
  */
 public class RandomConfig {
     public static Random random = new Random((long) (Math.random() * 100));
-    public static volatile Long dealId = 1L;
+    private static volatile Long dealId = 1L;
 
     public static Long getDealId() {
         RandomConfig.dealId += 1;
         return RandomConfig.dealId;
+    }
+
+    private static volatile Long quotationId = 1L;
+
+    public static Long getQuotationId() {
+        RandomConfig.quotationId += 1;
+        return RandomConfig.quotationId;
     }
 }

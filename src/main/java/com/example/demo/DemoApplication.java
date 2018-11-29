@@ -20,6 +20,8 @@ public class DemoApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        dealService.createDealInfo();
+//        dealService.createDealInfo();
+        dealService.createDealList();
+        dealService.createquotation();
     }
 }

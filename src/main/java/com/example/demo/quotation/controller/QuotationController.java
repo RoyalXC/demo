@@ -43,4 +43,8 @@ public class QuotationController {
     public JsonResult getDealMap() {
         return quotationService.getDealMap();
     }
+    @RequestMapping(value = "/getQuotationMap", method = RequestMethod.GET)
+    public JsonResult getQuotationMap() {
+        return quotationService.getQuotationMap();
+    }
 }
