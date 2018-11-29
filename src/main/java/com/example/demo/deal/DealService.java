@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -28,13 +29,16 @@ public class DealService {
 
     private static boolean flag = true;
 
+    private static boolean quotationFlag = true;
+
     public static void setFlag(boolean flag) {
         DealService.flag = flag;
     }
 
     private static ConcurrentHashMap<Date, List<DealEntity>> dealMap = new ConcurrentHashMap<>();
 
-    private static List<DealEntity> dealList = new CopyOnWriteArrayList<>();
+//    private static List<DealEntity> dealList = Collections.synchronizedList(new ArrayList<>());
+    private static ConcurrentLinkedQueue<DealEntity> dealList = new ConcurrentLinkedQueue<>();
 
     private static Map<String, Map<Date, QuotationEntity>> quotationMap = new ConcurrentHashMap<>();
 
@@ -42,7 +46,7 @@ public class DealService {
     private ThreadPoolTaskExecutor executor;
 
     public static List<DealEntity> getDealList() {
-        return dealList;
+        return (List<DealEntity>) dealList;
     }
 
     public static Map<String, Map<Date, QuotationEntity>> getQuotationMap() {
@@ -61,7 +65,7 @@ public class DealService {
         return result == null ? new ArrayList<>() : result;
     }
 
-    public void createDealInfo() {
+    public synchronized void createDealInfo() {
         executor.execute(() -> {
             while (flag) {
                 DealEntity dealEntity = new DealEntity();
@@ -77,52 +81,68 @@ public class DealService {
         });
     }
 
-    public void createDealList() {
+    public synchronized void createDealList() {
         executor.execute(() -> {
-            while (flag) {
-                DealEntity dealEntity = new DealEntity();
-                LOGGER.info("create a deal :{}", dealEntity.getDealId());
-                dealList.add(dealEntity);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            while (true) {
+                long t1 = System.currentTimeMillis();
+                List<DealEntity> list = new ArrayList<>();
+                while (flag) {
+                    DealEntity dealEntity = new DealEntity();
+                    LOGGER.info("create a deal :{}", dealEntity.getDealId());
+                    list.add(dealEntity);
+                    flag = System.currentTimeMillis() - t1 < 1000;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+                dealList.addAll(list);
+                LOGGER.info("add a dealList, list.size:{}, dealList.size:{}", list.size(), dealList.size());
+                list.clear();
+                flag = true;
             }
         });
     }
 
-    public void createquotation() {
-        executor.execute(() -> {
-            while (flag) {
-                if (dealList.size() > 0) {
-                    DealEntity entity = dealList.get(0);
-                    LOGGER.info("remove a deal :{}", entity.getDealId());
-                    dealList.remove(0);
-                    String stockCode = entity.getStockCode();
-                    Map<Date, QuotationEntity> quotationEntityMap = quotationMap.get(stockCode);
-                    if (quotationEntityMap == null) {
-                        quotationEntityMap = new ConcurrentHashMap<>();
-                        quotationMap.put(stockCode, quotationEntityMap);
+    public synchronized void createquotation() {
+        for (int i = 0; i < 2; i++) {
+            int finalI = i;
+            executor.execute(() -> {
+                while (true) {
+                    if (dealList.size() > 0) {
+                        DealEntity entity = dealList.poll();
+                        LOGGER.info("exec num:{},remove a deal :{}", finalI, entity.getDealId());
+                        String stockCode = entity.getStockCode();
+                        Map<Date, QuotationEntity> quotationEntityMap = quotationMap.get(stockCode);
+                        if (quotationEntityMap == null) {
+                            quotationEntityMap = new ConcurrentHashMap<>();
+                            quotationMap.put(stockCode, quotationEntityMap);
+                        }
+                        Date date = DateUtils.getMinute(entity.getTimestamp());
+                        QuotationEntity quotationEntity = quotationEntityMap.get(date);
+                        if (quotationEntity == null) {
+                            quotationEntity = new QuotationEntity(entity);
+                            quotationEntityMap.put(date, quotationEntity);
+                        } else {
+                            BigDecimal price = entity.getPrice();
+                            if (quotationEntity.getMax().compareTo(price) < 0) {
+                                quotationEntity.setMax(price);
+                            }
+                            if (quotationEntity.getMin().compareTo(price) > 0) {
+                                quotationEntity.setMin(price);
+                            }
+                            quotationEntity.setClose(price);
+                            quotationEntity.setNow(price);
+                        }
                     }
-                    Date date = DateUtils.getMinute(entity.getTimestamp());
-                    QuotationEntity quotationEntity = quotationEntityMap.get(date);
-                    if (quotationEntity == null) {
-                        quotationEntity = new QuotationEntity(entity);
-                        quotationEntityMap.put(date, quotationEntity);
-                    } else {
-                        BigDecimal price = entity.getPrice();
-                        if (quotationEntity.getMax().compareTo(price) < 0) {
-                            quotationEntity.setMax(price);
-                        }
-                        if (quotationEntity.getMin().compareTo(price) > 0) {
-                            quotationEntity.setMin(price);
-                        }
-                        quotationEntity.setClose(price);
-                        quotationEntity.setNow(price);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
-            }
-        });
+            });
+        }
     }
 }
