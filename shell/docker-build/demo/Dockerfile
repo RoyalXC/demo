@@ -1,4 +1,4 @@
-FROM java:8
+FROM myjre8:v1.0
 VOLUME /tmp
 ARG JAR_FILE
 ADD demo-1.0.0.jar app.jar
