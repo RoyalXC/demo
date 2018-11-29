@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.quotation.dao.DealDao">
+    <resultMap id="BaseResultMap"
+               type="DealEntity">
+        <id column="dealId" property="dealId" jdbcType="NUMERIC"/>
+        <result column="stockCode" property="stockCode" jdbcType="VARCHAR"/>
+        <result column="stockName" property="stockName" jdbcType="VARCHAR"/>
+        <result column="timestamp" property="timestamp" jdbcType="TIMESTAMP"/>
+        <result column="price" property="price" jdbcType="NUMERIC"/>
+        <result column="amount" property="amount" jdbcType="NUMERIC"/>
+        <result column="isValid" property="isValid" jdbcType="BOOLEAN"/>
+        <result column="cTime" property="cTime" jdbcType="TIMESTAMP"/>
+        <result column="mTime" property="mTime" jdbcType="TIMESTAMP"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        dealId, stockCode, stockName,
+        timestamp, price, amount,
+        isValid, cTime, mTime, remark
+    </sql>
+</mapper>

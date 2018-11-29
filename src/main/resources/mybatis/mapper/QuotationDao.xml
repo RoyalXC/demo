@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.quotation.dao.QuotationDao">
+    <resultMap id="BaseResultMap"
+               type="QuotationEntity">
+        <id column="quotationId" property="quotationId" jdbcType="NUMERIC"/>
+        <result column="stockCode" property="stockCode" jdbcType="VARCHAR"/>
+        <result column="stockName" property="stockName" jdbcType="VARCHAR"/>
+        <result column="timestamp" property="timestamp" jdbcType="TIMESTAMP"/>
+        <result column="max" property="max" jdbcType="NUMERIC"/>
+        <result column="min" property="min" jdbcType="NUMERIC"/>
+        <result column="open" property="open" jdbcType="NUMERIC"/>
+        <result column="close" property="close" jdbcType="NUMERIC"/>
+        <result column="now" property="now" jdbcType="NUMERIC"/>
+        <result column="isValid" property="isValid" jdbcType="BOOLEAN"/>
+        <result column="cTime" property="cTime" jdbcType="TIMESTAMP"/>
+        <result column="mTime" property="mTime" jdbcType="TIMESTAMP"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        quotationId, stockCode, stockName,
+        timestamp, max, min, open, close, now
+        isValid, cTime, mTime, remark
+    </sql>
+    <select id="selectAll" resultType="com.example.demo.common.spi.po.entity.QuotationEntity">
+        select
+        <include refid="Base_Column_List"/>
+        from quotation
+        where isValid = 1
+    </select>
+</mapper>

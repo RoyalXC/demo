@@ -1,5 +1,7 @@
-package com.example.demo;
+package com.example.demo.common.spi.base;
 
+
+import com.example.demo.common.spi.enums.BaseResultEnum;
 
 import java.io.Serializable;
 

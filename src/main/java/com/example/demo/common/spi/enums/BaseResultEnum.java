@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.common.spi.enums;
 
 public enum BaseResultEnum {
     UNKNOWN_ERROR(0, "未知错误"),
